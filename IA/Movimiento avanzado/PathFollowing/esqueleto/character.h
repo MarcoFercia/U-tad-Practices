@@ -1,0 +1,59 @@
+#ifndef __CHARACTER_H__
+#define __CHARACTER_H__
+
+#include <moaicore/MOAIEntity2D.h>
+#include <params.h>
+#include "Path.h"
+#include <xlocinfo>
+#include "Steerings/Steering.h"
+
+
+
+
+class Character: public MOAIEntity2D
+{
+public:
+    DECL_LUA_FACTORY(Character)
+protected:
+	virtual void OnStart();
+	virtual void OnStop();
+	virtual void OnUpdate(float step);
+public:
+	virtual void DrawDebug();
+
+	Character();
+	~Character();
+	
+	void SetLinearVelocity(float x, float y) { mLinearVelocity.mX = x; mLinearVelocity.mY = y;}
+	void SetAngularVelocity(float angle) { mAngularVelocity = angle;}
+	
+	USVec2D GetLinearVelocity() const { return mLinearVelocity;}
+	float GetAngularVelocity() const { return mAngularVelocity;}
+	const  Params& GetParams() const { return mParams; }
+	const Path& GetPath() const { return mPath; }
+
+	void SetTarget(const USVec2D& _target) { mParams.targetPosition = _target; }
+private:
+	USVec2D mLinearVelocity;
+	float mAngularVelocity;
+
+	USVec2D mLinearAceleration;
+	float mAngularAceleration;
+	
+	Params mParams;
+	Path mPath;
+	std::vector<Steering*> mSteerings;
+
+	
+	// Lua configuration
+public:
+	virtual void RegisterLuaFuncs(MOAILuaState& state);
+private:
+	static int _setLinearVel(lua_State* L);
+	static int _setAngularVel(lua_State* L);
+};
+
+
+
+
+#endif
